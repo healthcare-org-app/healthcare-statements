@@ -1,0 +1,14 @@
+name: statements-service
+port: 8708
+lang: python
+description: "statements-service \u2014 domain: billing"
+http_deps:
+- invoicing-service
+- patients-service
+- notifications-service
+- audit-log-service
+publishes:
+- audit.event
+subscribes:
+- invoice.issued
+- invoice.paid
