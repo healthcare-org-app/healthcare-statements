@@ -70,6 +70,24 @@ def build_blueprint(svc) -> Blueprint:
     def create_record():
         payload = request.get_json(silent=True) or {}
         payload.pop("id", None)
+        if payload.get('patient_id'):
+            _peer = clients.get('patients-service')
+            if _peer:
+                try:
+                    payload['patient_snapshot'] = json_or_raise(
+                        _peer.get(f"/api/patients/" + str(payload['patient_id']))
+                    )
+                except ServiceUnavailable as _e:
+                    payload['patient_warn'] = str(_e)
+        if payload.get('invoice_id'):
+            _peer = clients.get('invoicing-service')
+            if _peer:
+                try:
+                    payload['invoice_snapshot'] = json_or_raise(
+                        _peer.get(f"/api/invoicing/" + str(payload['invoice_id']))
+                    )
+                except ServiceUnavailable as _e:
+                    payload['invoice_warn'] = str(_e)
         row = db.query_one(
             f"INSERT INTO {TABLE} (data) VALUES (%s) RETURNING *",
             (Json(payload),),
