@@ -1,7 +1,7 @@
 services:
   statements-service:
     build: .
-    container_name: ${NAME_UNDERSCORE}
+    container_name: statements_service
     depends_on:
       postgres:
         condition: service_healthy
